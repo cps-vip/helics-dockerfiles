@@ -111,3 +111,9 @@ RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyri
 
 # Default command to launch bash shell
 # CMD ["/bin/bash"]
+
+# # Build the Docker image
+# docker build -t helics-docker .
+
+# # Run the Docker container with port mapping
+# docker run -p 6080:80 helics-docker
