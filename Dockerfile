@@ -96,15 +96,15 @@ RUN cd ~ && \
     git clone https://github.com/ros2/examples src/examples -b humble
     #colcon build --symlink-install
 
-# Install tools for Gazebo Harmonic
+# Install tools for Ignition Fortress
 RUN apt-get update && \
     apt-get install -y curl lsb-release gnupg
 
-# Install Gazebo Harmonic
+# Install Ignition Fortress
 RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
     apt-get update && \
-    apt-get install -y gz-harmonic
+    apt-get install -y ignition-fortress
 
 # Source the setup.bash to ensure environment variables are set correctly
 # SHELL ["/bin/bash", "-c", "source ~/.bashrc"]
