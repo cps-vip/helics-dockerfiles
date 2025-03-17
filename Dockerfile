@@ -48,7 +48,7 @@ RUN apt-get install -y ros-humble-desktop
 RUN apt-get install -y ros-dev-tools
 
 # Install NAV2 and Turtlebot packages
-RUN apt-get install -y ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-turtlebot3
+# RUN apt-get install -y ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-turtlebot3
 
 # Install HELICS from source
 WORKDIR /software
