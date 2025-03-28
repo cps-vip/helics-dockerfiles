@@ -47,6 +47,9 @@ RUN apt-get install -y ros-humble-desktop
 # Install ROS development tools
 RUN apt-get install -y ros-dev-tools
 
+# Install NAV2 and Turtlebot packages
+# RUN apt-get install -y ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-turtlebot3
+
 # Install HELICS from source
 WORKDIR /software
 RUN git clone https://github.com/GMLC-TDC/HELICS && \
@@ -111,3 +114,19 @@ RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyri
 
 # Default command to launch bash shell
 # CMD ["/bin/bash"]
+
+# # Build the Docker image
+# docker build -t helics-docker .
+
+# # Run the Docker container with port mapping
+# docker run -p 6080:80 helics-docker
+
+# Commands to try if Docker gives errors (probably due to space/cache issues)
+# You can also manually remove Docker images, containers, and builders in the Desktop app
+# docker image prune
+# docker builder prune
+# docker container prune
+
+# Check Docker resources
+# docker system df
+
