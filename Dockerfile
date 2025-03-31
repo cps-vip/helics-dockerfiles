@@ -1,4 +1,23 @@
-# Use Ubuntu 22.04 (Jammy) as base image since ROS 2 Jazzy supports it
+# GT CPS VIP Virtual Machine Dockerfile
+
+# To build the Docker image
+# docker build -t helics-docker .
+
+# To run the Docker container with port mapped
+# docker run -p 6080:80 helics-docker
+
+# Commands to try if Docker gives errors (probably due to space/cache issues)
+
+# docker image prune
+# docker builder prune
+# docker container prune
+
+# You can also manually remove Docker images, containers, and builders in the Desktop app
+
+# To check Docker resources
+# docker system df
+
+# Use Tiryoh's ROS2 Desktop VNC image as the base image with Jazzy
 FROM tiryoh/ros2-desktop-vnc:jazzy
 
 # Set non-interactive mode for apt-get
@@ -34,7 +53,7 @@ RUN locale-gen en_US en_US.UTF-8 && \
 # Enable Ubuntu Universe repository
 RUN add-apt-repository universe
 
-# Update
+# Update before installation
 RUN apt update
 
 # Add ROS 2 GPG key and repository to sources list
@@ -49,9 +68,6 @@ RUN apt-get install -y ros-dev-tools
 
 # Install ROS 2 Jazzy Desktop version (includes GUI tools like RViz)
 RUN apt-get install -y ros-jazzy-desktop
-
-# Install NAV2 and Turtlebot packages
-# RUN apt-get install -y ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-turtlebot3
 
 # Install HELICS from source
 WORKDIR /software
@@ -68,24 +84,24 @@ RUN export PATH=/software/HELICS/build/bin:$PATH && \
     export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/software/HELICS/include && \
     ls /software/HELICS/build/lib
 
+# Set environment variables - required with Jazzy image
 ENV CMAKE_ARGS="-DCMAKE_CXX_STANDARD=20"
 
+# Install node and npm - possibly needed for broken command below
 RUN apt-get install -y nodejs npm
 
-# Install Python virtual environment tools
+# Install Python virtual environment tools - required since Ubuntu 22.04 restricts 'pip' command
 RUN apt-get install -y python3-venv
-
-# Create a virtual environment for Python
 RUN python3 -m venv /software/venv
 
 # Activate the virtual environment and install HELICS Python bindings
+# TODO - resolve this command. setup.py breaks when running
 # RUN /software/venv/bin/pip install helics==3.5.1 helics[cli]==3.5.1
+# ! Deprecated version of command
+# RUN pip3 install --break-system-packages helics==3.5.1 helics[cli]==3.5.1
 
 # Add the virtual environment to PATH
 ENV PATH="/software/venv/bin:$PATH"
-
-# Install HELICS Python bindings
-#RUN pip3 install --break-system-packages helics==3.5.1 helics[cli]==3.5.1
 
 # Clone and build GridLAB-D with HELICS integration
 RUN git clone https://github.com/gridlab-d/gridlab-d.git
@@ -104,7 +120,7 @@ RUN cd gridlab-d && \
 
 RUN apt-get install -y python-is-python3 python3-colcon-common-extensions
 
-# Set environment variables for ROS 2, HELICS, and GridLAB-D
+# Set environment variables for ROS 2 Jazzy, HELICS, and GridLAB-D
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
     echo "export PATH=/software/GridLAB-D/bin:\$PATH" >> ~/.bashrc && \
     echo "export GLPATH=/software/GridLAB-D/share" >> ~/.bashrc
@@ -128,21 +144,3 @@ RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyri
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
     apt-get update && \
     apt-get install -y gz-harmonic
-
-
-
-# # Build the Docker image
-# docker build -t helics-docker .
-
-# # Run the Docker container with port mapping
-# docker run -p 6080:80 helics-docker
-
-# Commands to try if Docker gives errors (probably due to space/cache issues)
-# You can also manually remove Docker images, containers, and builders in the Desktop app
-# docker image prune
-# docker builder prune
-# docker container prune
-
-# Check Docker resources
-# docker system df
-
