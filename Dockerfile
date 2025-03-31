@@ -1,10 +1,10 @@
-# Use Ubuntu 22.04 (Jammy) as base image since ROS 2 Humble and GridLAB-D supports it
-FROM tiryoh/ros2-desktop-vnc:humble
+# Use Ubuntu 22.04 (Jammy) as base image since ROS 2 Jazzy supports it
+FROM tiryoh/ros2-desktop-vnc:jazzy
 
 # Set non-interactive mode for apt-get
 ENV DEBIAN_FRONTEND=noninteractive
-ENV LANG en_US.UTF-8
-ENV LC_ALL C.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=C.UTF-8
 
 # Update packages and install system dependencies
 RUN apt-get update && \
@@ -34,6 +34,9 @@ RUN locale-gen en_US en_US.UTF-8 && \
 # Enable Ubuntu Universe repository
 RUN add-apt-repository universe
 
+# Update
+RUN apt update
+
 # Add ROS 2 GPG key and repository to sources list
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
@@ -41,22 +44,23 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
 # Update apt repository caches and upgrade system packages
 RUN apt-get update && apt-get upgrade -y
 
-# Install ROS 2 Humble Desktop version (includes GUI tools like RViz)
-RUN apt-get install -y ros-humble-desktop
-
 # Install ROS development tools
 RUN apt-get install -y ros-dev-tools
 
+# Install ROS 2 Jazzy Desktop version (includes GUI tools like RViz)
+RUN apt-get install -y ros-jazzy-desktop
+
 # Install NAV2 and Turtlebot packages
-# RUN apt-get install -y ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-turtlebot3
+# RUN apt-get install -y ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-turtlebot3
 
 # Install HELICS from source
 WORKDIR /software
+
 RUN git clone https://github.com/GMLC-TDC/HELICS && \
     cd HELICS && \
     git checkout v3.5.1 && \
     mkdir build && cd build && \
-    cmake -DHELICS_BUILD_CXX_SHARED_LIB=ON -DCMAKE_INSTALL_PREFIX=/software/HELICS ../ && \
+    cmake -DHELICS_BUILD_CXX_SHARED_LIB=ON -DCMAKE_INSTALL_PREFIX=/software/HELICS -DCMAKE_CXX_STANDARD=20 ../ && \
     make -j$(nproc) && make install 
 
 RUN export PATH=/software/HELICS/build/bin:$PATH && \
@@ -64,8 +68,24 @@ RUN export PATH=/software/HELICS/build/bin:$PATH && \
     export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/software/HELICS/include && \
     ls /software/HELICS/build/lib
 
+ENV CMAKE_ARGS="-DCMAKE_CXX_STANDARD=20"
+
+RUN apt-get install -y nodejs npm
+
+# Install Python virtual environment tools
+RUN apt-get install -y python3-venv
+
+# Create a virtual environment for Python
+RUN python3 -m venv /software/venv
+
+# Activate the virtual environment and install HELICS Python bindings
+# RUN /software/venv/bin/pip install helics==3.5.1 helics[cli]==3.5.1
+
+# Add the virtual environment to PATH
+ENV PATH="/software/venv/bin:$PATH"
+
 # Install HELICS Python bindings
-RUN pip3 install helics==3.5.1 helics[cli]==3.5.1
+#RUN pip3 install --break-system-packages helics==3.5.1 helics[cli]==3.5.1
 
 # Clone and build GridLAB-D with HELICS integration
 RUN git clone https://github.com/gridlab-d/gridlab-d.git
@@ -85,12 +105,12 @@ RUN cd gridlab-d && \
 RUN apt-get install -y python-is-python3 python3-colcon-common-extensions
 
 # Set environment variables for ROS 2, HELICS, and GridLAB-D
-RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc && \
+RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
     echo "export PATH=/software/GridLAB-D/bin:\$PATH" >> ~/.bashrc && \
     echo "export GLPATH=/software/GridLAB-D/share" >> ~/.bashrc
 
-RUN    pip3 install --force-reinstall numpy==1.26.3 && \
-    pip3 install --force-reinstall PYPOWER==5.1.16
+RUN /software/venv/bin/pip install --force-reinstall numpy==1.26.3 && \
+    /software/venv/bin/pip install --force-reinstall PYPOWER==5.1.16
 
 RUN cd ~ && \
     git clone https://github.com/fizzyforever101/ros2-helics.git && \
@@ -109,11 +129,7 @@ RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyri
     apt-get update && \
     apt-get install -y gz-harmonic
 
-# Source the setup.bash to ensure environment variables are set correctly
-# SHELL ["/bin/bash", "-c", "source ~/.bashrc"]
 
-# Default command to launch bash shell
-# CMD ["/bin/bash"]
 
 # # Build the Docker image
 # docker build -t helics-docker .
