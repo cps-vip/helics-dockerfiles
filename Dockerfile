@@ -98,7 +98,7 @@ RUN python3 -m venv /software/venv
 # TODO - resolve this command. setup.py breaks when running
 # RUN /software/venv/bin/pip install helics==3.5.1 helics[cli]==3.5.1
 # ! Deprecated version of command
-# RUN pip3 install --break-system-packages helics==3.5.1 helics[cli]==3.5.1
+# RUN pip3 install helics==3.5.1 helics[cli]==3.5.1
 
 # Add the virtual environment to PATH
 ENV PATH="/software/venv/bin:$PATH"
