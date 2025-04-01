@@ -144,3 +144,10 @@ RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyri
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
     apt-get update && \
     apt-get install -y gz-harmonic
+
+# Install NAV2
+RUN apt-get install -y ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-nav2-minimal-tb*
+
+# Set up NAV2 environment
+RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
+    echo "export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models" >> ~/.bashrc
