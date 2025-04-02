@@ -1,9 +1,17 @@
-# GT CPS VIP Virtual Machine Dockerfile
+# GT CPS VIP VIRTUAL MACHINE DOCKERFILE
 
-# To build the Docker image
+# Collected installations:
+# - Ubuntu 22.04
+# - ROS 2 Jazzy
+# - HELICS 3.5.1
+# - GridLAB-D with HELICS integration
+# - Gazebo Harmonic
+# - NAV2
+
+# BUILD DOCKER IMAGE
 # docker build -t helics-docker .
 
-# To run the Docker container with port mapped
+# RUN DOCKER IMAGE WITH PORT MAPPING
 # docker run -p 6080:80 helics-docker
 
 # Commands to try if Docker gives errors (probably due to space/cache issues)
@@ -96,7 +104,7 @@ RUN python3 -m venv /software/venv
 
 # Activate the virtual environment and install HELICS Python bindings
 # TODO - resolve this command. setup.py breaks when running
-# RUN /software/venv/bin/pip install helics==3.5.1 helics[cli]==3.5.1
+RUN /software/venv/bin/pip install helics==3.6.1 helics[cli]==3.6.1
 # ! Deprecated version of command
 # RUN pip3 install helics==3.5.1 helics[cli]==3.5.1
 
@@ -151,3 +159,9 @@ RUN apt-get install -y ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-na
 # Set up NAV2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
     echo "export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models" >> ~/.bashrc
+
+
+# update
+
+# docker tag ros2-jazzy-gz-harmonic-nav2 ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
+# docker push ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
