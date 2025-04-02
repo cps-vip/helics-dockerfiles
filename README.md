@@ -31,3 +31,6 @@ You can also manually remove Docker images, containers, and builders in the Desk
 
 ### Updating GHCR registry after changes
 ```
+docker tag ros2-jazzy-gz-harmonic-nav2 ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
+docker push ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
+```
