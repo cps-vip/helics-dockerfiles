@@ -23,7 +23,13 @@
 # You can also manually remove Docker images, containers, and builders in the Desktop app
 
 # To check Docker resources
+
 # docker system df
+
+# UPDATE IMAGE TO GHCR
+
+# docker tag ros2-jazzy-gz-harmonic-nav2 ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
+# docker push ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
 
 # Use Tiryoh's ROS2 Desktop VNC image as the base image with Jazzy
 FROM tiryoh/ros2-desktop-vnc:jazzy
@@ -159,9 +165,3 @@ RUN apt-get install -y ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-na
 # Set up NAV2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
     echo "export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models" >> ~/.bashrc
-
-
-# update
-
-# docker tag ros2-jazzy-gz-harmonic-nav2 ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
-# docker push ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
