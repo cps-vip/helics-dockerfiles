@@ -111,10 +111,7 @@ RUN apt-get install -y python3-venv
 RUN python3 -m venv /software/venv
 
 # Activate the virtual environment and install HELICS Python bindings
-# TODO - resolve this command. setup.py breaks when running
 RUN /software/venv/bin/pip install helics==3.6.1 helics[cli]==3.6.1
-# ! Deprecated version of command
-# RUN pip3 install helics==3.5.1 helics[cli]==3.5.1
 
 # Add the virtual environment to PATH
 ENV PATH="/software/venv/bin:$PATH"
