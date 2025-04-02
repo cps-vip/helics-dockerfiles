@@ -39,6 +39,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=C.UTF-8
 
+RUN chmod -R 777 ~
+
 # Update packages and install system dependencies
 RUN apt-get update && \
     apt-get install -y \
@@ -145,12 +147,18 @@ ENV PATH="/software/GridLAB-D/bin:$PATH"
 RUN /software/venv/bin/pip install --force-reinstall numpy==1.26.3 && \
     /software/venv/bin/pip install --force-reinstall PYPOWER==5.1.16
 
-RUN cd ~ && \
-    git clone https://github.com/fizzyforever101/ros2-helics.git && \
-    mkdir -p ~/ros2_ws/src && \
-    cd ~/ros2_ws && \
-    git clone https://github.com/ros2/examples src/examples -b humble
-    #colcon build --symlink-install
+# RUN cd ~ && \
+#     git clone https://github.com/fizzyforever101/ros2-helics.git && \
+#     mkdir -p ~/ros2_ws/src && \
+#     cd ~/ros2_ws && \
+#     git clone https://github.com/ros2/examples src/examples -b humble
+#     #colcon build --symlink-install
+
+RUN mkdir -p /software/ros2-helics && \
+    git clone https://github.com/fizzyforever101/ros2-helics.git /software/ros2-helics && \
+    mkdir -p /software/ros2_ws/src && \
+    cd /software/ros2_ws && \
+    git clone https://github.com/ros2/examples src/examples -b jazzy
 
 # Install tools for Gazebo Harmonic
 RUN apt-get update && \
