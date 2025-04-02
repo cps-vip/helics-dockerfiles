@@ -1,9 +1,17 @@
-# GT CPS VIP Virtual Machine Dockerfile
+# GT CPS VIP VIRTUAL MACHINE DOCKERFILE
 
-# To build the Docker image
+# Collected installations:
+# - Ubuntu 22.04
+# - ROS 2 Jazzy
+# - HELICS 3.5.1
+# - GridLAB-D with HELICS integration
+# - Gazebo Harmonic
+# - NAV2
+
+# BUILD DOCKER IMAGE
 # docker build -t helics-docker .
 
-# To run the Docker container with port mapped
+# RUN DOCKER IMAGE WITH PORT MAPPING
 # docker run -p 6080:80 helics-docker
 
 # Commands to try if Docker gives errors (probably due to space/cache issues)
@@ -15,7 +23,13 @@
 # You can also manually remove Docker images, containers, and builders in the Desktop app
 
 # To check Docker resources
+
 # docker system df
+
+# UPDATE IMAGE TO GHCR
+
+# docker tag ros2-jazzy-gz-harmonic-nav2 ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
+# docker push ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
 
 # Use Tiryoh's ROS2 Desktop VNC image as the base image with Jazzy
 FROM tiryoh/ros2-desktop-vnc:jazzy
@@ -24,6 +38,8 @@ FROM tiryoh/ros2-desktop-vnc:jazzy
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=C.UTF-8
+
+RUN chmod -R 777 ~
 
 # Update packages and install system dependencies
 RUN apt-get update && \
@@ -95,10 +111,7 @@ RUN apt-get install -y python3-venv
 RUN python3 -m venv /software/venv
 
 # Activate the virtual environment and install HELICS Python bindings
-# TODO - resolve this command. setup.py breaks when running
-# RUN /software/venv/bin/pip install helics==3.5.1 helics[cli]==3.5.1
-# ! Deprecated version of command
-# RUN pip3 install helics==3.5.1 helics[cli]==3.5.1
+RUN /software/venv/bin/pip install helics==3.6.1 helics[cli]==3.6.1
 
 # Add the virtual environment to PATH
 ENV PATH="/software/venv/bin:$PATH"
@@ -125,15 +138,24 @@ RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
     echo "export PATH=/software/GridLAB-D/bin:\$PATH" >> ~/.bashrc && \
     echo "export GLPATH=/software/GridLAB-D/share" >> ~/.bashrc
 
+# Add GridLAB-D to the global PATH
+ENV PATH="/software/GridLAB-D/bin:$PATH"
+
 RUN /software/venv/bin/pip install --force-reinstall numpy==1.26.3 && \
     /software/venv/bin/pip install --force-reinstall PYPOWER==5.1.16
 
-RUN cd ~ && \
-    git clone https://github.com/fizzyforever101/ros2-helics.git && \
-    mkdir -p ~/ros2_ws/src && \
-    cd ~/ros2_ws && \
-    git clone https://github.com/ros2/examples src/examples -b humble
-    #colcon build --symlink-install
+# RUN cd ~ && \
+#     git clone https://github.com/fizzyforever101/ros2-helics.git && \
+#     mkdir -p ~/ros2_ws/src && \
+#     cd ~/ros2_ws && \
+#     git clone https://github.com/ros2/examples src/examples -b humble
+#     #colcon build --symlink-install
+
+RUN mkdir -p /software/ros2-helics && \
+    git clone https://github.com/fizzyforever101/ros2-helics.git /software/ros2-helics && \
+    mkdir -p /software/ros2_ws/src && \
+    cd /software/ros2_ws && \
+    git clone https://github.com/ros2/examples src/examples -b jazzy
 
 # Install tools for Gazebo Harmonic
 RUN apt-get update && \
