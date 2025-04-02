@@ -139,6 +139,9 @@ RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
     echo "export PATH=/software/GridLAB-D/bin:\$PATH" >> ~/.bashrc && \
     echo "export GLPATH=/software/GridLAB-D/share" >> ~/.bashrc
 
+# Add GridLAB-D to the global PATH
+ENV PATH="/software/GridLAB-D/bin:$PATH"
+
 RUN /software/venv/bin/pip install --force-reinstall numpy==1.26.3 && \
     /software/venv/bin/pip install --force-reinstall PYPOWER==5.1.16
 
