@@ -28,8 +28,8 @@
 
 # UPDATE IMAGE TO GHCR
 
-# docker tag ros2-jazzy-gz-harmonic-nav2 ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
-# docker push ghcr.io/cps-vip/ros2-jazzy-gz-harmonic-nav2:latest
+# docker tag cps-vip-vm ghcr.io/cps-vip/cps-vip-vm:latest
+# docker push ghcr.io/cps-vip/cps-vip-vm:latest
 
 # Use Tiryoh's ROS2 Desktop VNC image as the base image with Jazzy
 FROM tiryoh/ros2-desktop-vnc:jazzy
