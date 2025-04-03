@@ -145,18 +145,9 @@ RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
 ENV PATH="/software/GridLAB-D/bin:$PATH"
 
 RUN /software/venv/bin/pip install --force-reinstall numpy==1.26.3 && \
-    /software/venv/bin/pip install --force-reinstall PYPOWER==5.1.16
+    /software/venv/bin/pip install --force-reinstall PYPOWER==5.1.16 &&\
+    /software/venv/bin/pip install scipy
 
-# RUN cd ~ && \
-#     git clone https://github.com/fizzyforever101/ros2-helics.git && \
-#     mkdir -p ~/ros2_ws/src && \
-#     cd ~/ros2_ws && \
-#     git clone https://github.com/ros2/examples src/examples -b humble
-#     #colcon build --symlink-install
-
-RUN mkdir -p /software/ros2_ws/src && \
-    cd /software/ros2_ws && \
-    git clone https://github.com/ros2/examples src/examples -b jazzy
 
 # Install tools for Gazebo Harmonic
 RUN apt-get update && \
@@ -177,5 +168,12 @@ RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
 
 # Install GridlabD-HELICS example
 WORKDIR /home/ubuntu
+
+RUN mkdir -p /home/ubuntu/ros2_ws/src && \
+    cd /home/ubuntu/ros2_ws && \
+    git clone https://github.com/ros2/examples src/examples -b jazzy
+
 RUN mkdir -p /home/ubuntu/ros2-helics
 RUN git clone https://github.com/fizzyforever101/ros2-helics.git /home/ubuntu/ros2-helics
+
+
