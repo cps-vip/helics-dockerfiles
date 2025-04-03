@@ -85,6 +85,9 @@ RUN apt-get install -y ros-dev-tools
 # Install ROS 2 Jazzy Desktop version (includes GUI tools like RViz)
 RUN apt-get install -y ros-jazzy-desktop
 
+# Ensure /software directory is writable
+RUN mkdir -p /software && chmod -R 777 /software
+
 # Install HELICS from source
 WORKDIR /software
 
@@ -151,9 +154,7 @@ RUN /software/venv/bin/pip install --force-reinstall numpy==1.26.3 && \
 #     git clone https://github.com/ros2/examples src/examples -b humble
 #     #colcon build --symlink-install
 
-RUN mkdir -p /software/ros2-helics && \
-    git clone https://github.com/fizzyforever101/ros2-helics.git /software/ros2-helics && \
-    mkdir -p /software/ros2_ws/src && \
+RUN mkdir -p /software/ros2_ws/src && \
     cd /software/ros2_ws && \
     git clone https://github.com/ros2/examples src/examples -b jazzy
 
@@ -173,3 +174,8 @@ RUN apt-get install -y ros-jazzy-navigation2 ros-jazzy-nav2-bringup ros-jazzy-na
 # Set up NAV2 environment
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc && \
     echo "export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models" >> ~/.bashrc
+
+# Install GridlabD-HELICS example
+WORKDIR /home/ubuntu
+RUN mkdir -p /home/ubuntu/ros2-helics
+RUN git clone https://github.com/fizzyforever101/ros2-helics.git /home/ubuntu/ros2-helics
