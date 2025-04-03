@@ -15,7 +15,8 @@
 1. Use this link ([GHCR Auth](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)) to create a personal access token with the `write:packages`, `read:packages`, and `delete:packages` scopes.
 2. Run the command ```echo <personal-access-token> | docker login ghcr.io -u <your-github-username> --password-stdin``` with your generated PAT and GitHub username.
 3. Run the pull command ```docker pull ghcr.io/cps-vip/cps-vip-vm:latest```
-4. Start a container with the command ```docker run -p 6080:80 cps-vip-vm:latest```
+4. Build the container with the command ```docker build -t cps-vip-vm:latest .```
+5. Start a container with the command ```docker run -p 6080:80 cps-vip-vm:latest```
 
 
 
