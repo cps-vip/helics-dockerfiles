@@ -146,7 +146,8 @@ ENV PATH="/software/GridLAB-D/bin:$PATH"
 
 RUN /software/venv/bin/pip install --force-reinstall numpy==1.26.3 && \
     /software/venv/bin/pip install --force-reinstall PYPOWER==5.1.16 &&\
-    /software/venv/bin/pip install scipy
+    /software/venv/bin/pip install scipy &&\
+    /software/venv/bin/pip install catkin_pkg
 
 
 # Install tools for Gazebo Harmonic
